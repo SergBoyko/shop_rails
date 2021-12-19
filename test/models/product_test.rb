@@ -1,7 +1,32 @@
 require "test_helper"
 
 class ProductTest < ActiveSupport::TestCase
-  # test "the truth" do
-  #   assert true
-  # end
+  test 'product attributes must not be empty' do
+    product = Product.new
+    assert product.invalid?
+    assert(product.errors[:title].any?, "")
+    assert product.errors[:description].any?
+    assert product.errors[:price].any?
+    assert product.errors[:image_url].any?
+  end
+
+  def new_product(image_url)
+    Product.new(title: 'lotem',
+                description: 'ipsum',
+                price: 1,
+                image_url: image_url)
+  end
+
+  test 'image url' do
+    ok = %w[fred.gif fred.jpg fred.png fred.JPG fred.Jpg]
+    bad = %w[fred.doc fred.gif.more]
+    ok.each do |name|
+      assert new_product(name).valid?, "#{name} shouldn't be invalid"
+    end
+    bad.each do |name|
+      assert new_product(name).invalid?, "#{name} shouldn't be valid"
+    end
+
+  end
+
 end
